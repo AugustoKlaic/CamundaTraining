@@ -1,0 +1,44 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.2'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'org.bpmn.training'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// basic spring dependency
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+	// database dependency
+	implementation 'com.h2database:h2'
+
+	// camunda dependency
+	implementation 'org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter-webapp:7.21.0'
+	implementation 'org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter-rest:7.21.0'
+	implementation 'org.graalvm.js:js:23.0.5'
+	implementation 'org.graalvm.js:js-scriptengine:24.0.2'
+
+	// unit test with camunda dependency
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.camunda.bpm:camunda-bpm-junit5:7.21.0'
+	testImplementation 'org.camunda.bpm.assert:camunda-bpm-assert:12.0.0'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
