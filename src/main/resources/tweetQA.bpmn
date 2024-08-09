@@ -25,11 +25,6 @@
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_17tjtut" sourceRef="Activity_1nen5tw" targetRef="Event_038sjl5" />
     <bpmn:sequenceFlow id="Flow_1covv5s" sourceRef="Activity_09ja5l1" targetRef="Event_1wmneb9" />
-    <bpmn:scriptTask id="Activity_1nen5tw" name="post tweet" scriptFormat="javascript">
-      <bpmn:incoming>Flow_06bdvxo</bpmn:incoming>
-      <bpmn:outgoing>Flow_17tjtut</bpmn:outgoing>
-      <bpmn:script>print('Tweet published');</bpmn:script>
-    </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_09ja5l1" name="delete tweet" scriptFormat="javascript">
       <bpmn:incoming>Flow_179cl73</bpmn:incoming>
       <bpmn:outgoing>Flow_1covv5s</bpmn:outgoing>
@@ -39,6 +34,10 @@
       <bpmn:incoming>Flow_15pm1cb</bpmn:incoming>
       <bpmn:outgoing>Flow_1rkzdoh</bpmn:outgoing>
     </bpmn:manualTask>
+    <bpmn:serviceTask id="Activity_1nen5tw" name="post tweet" camunda:class="org.bpmn.training.camundatraining.camunda.CreateTweetDelegate">
+      <bpmn:incoming>Flow_06bdvxo</bpmn:incoming>
+      <bpmn:outgoing>Flow_17tjtut</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmn:message id="Message_3b3iubk" name="document" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -47,12 +46,6 @@
         <dc:Bounds x="172" y="112" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="156" y="155" width="69" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_016aviy_di" bpmnElement="Gateway_016aviy" isMarkerVisible="true">
-        <dc:Bounds x="415" y="105" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="414" y="81" width="52" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_038sjl5_di" bpmnElement="Event_038sjl5">
@@ -67,14 +60,20 @@
           <dc:Bounds x="694" y="265" width="72" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1ql1761_di" bpmnElement="Activity_1nen5tw">
-        <dc:Bounds x="520" y="90" width="100" height="80" />
+      <bpmndi:BPMNShape id="Gateway_016aviy_di" bpmnElement="Gateway_016aviy" isMarkerVisible="true">
+        <dc:Bounds x="415" y="105" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="414" y="81" width="52" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1ckkx6h_di" bpmnElement="Activity_09ja5l1">
         <dc:Bounds x="520" y="200" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0r95jgq_di" bpmnElement="Activity_1ua290a">
         <dc:Bounds x="260" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kw53se_di" bpmnElement="Activity_1nen5tw">
+        <dc:Bounds x="520" y="90" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_15pm1cb_di" bpmnElement="Flow_15pm1cb">
         <di:waypoint x="208" y="130" />
