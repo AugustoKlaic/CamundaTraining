@@ -5,6 +5,7 @@ import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.junit5.ProcessEngineExtension;
+import org.camunda.bpm.extension.process_test_coverage.junit5.ProcessEngineCoverageExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -14,7 +15,7 @@ import java.util.Map;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
 
 
-@ExtendWith(ProcessEngineExtension.class)
+@ExtendWith(ProcessEngineCoverageExtension.class)
 class CamundaTrainingApplicationTests {
 
 	ProcessEngine processEngine;
@@ -27,6 +28,7 @@ class CamundaTrainingApplicationTests {
 		// Create a HashMap to put in variables for the process instance
 		Map<String, Object> variables = new HashMap<String, Object>();
 		variables.put("approved", true);
+		variables.put("content", "First tweet!");
 		// Start process with Java API and variables
 		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("twitterQa", variables);
 

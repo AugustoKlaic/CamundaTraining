@@ -11,7 +11,7 @@ public class CreateTweetDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
-        String content = "First java delegate with camunda";
+        String content = (String) delegateExecution.getVariable("content");
         twitterService.updateStatus(content);
     }
 }
