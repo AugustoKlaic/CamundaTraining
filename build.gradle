@@ -33,9 +33,8 @@ dependencies {
 
 	// unit test with camunda dependency
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.camunda.bpm:camunda-bpm-junit5:7.21.0'
-	testImplementation 'org.camunda.bpm.assert:camunda-bpm-assert:12.0.0'
+	testImplementation 'org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter-test:7.21.0'
 	testImplementation 'org.camunda.bpm.extension:camunda-bpm-process-test-coverage-junit5:1.0.3'
 
 }

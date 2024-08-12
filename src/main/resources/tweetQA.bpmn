@@ -4,7 +4,7 @@
     <bpmn:startEvent id="Event_1gwm908" name="Tweet created">
       <bpmn:outgoing>Flow_15pm1cb</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="Flow_15pm1cb" sourceRef="Event_1gwm908" targetRef="Activity_1ua290a" />
+    <bpmn:sequenceFlow id="Flow_15pm1cb" sourceRef="Event_1gwm908" targetRef="reviewTweet" />
     <bpmn:endEvent id="Event_038sjl5" name="tweet approved">
       <bpmn:incoming>Flow_17tjtut</bpmn:incoming>
     </bpmn:endEvent>
@@ -16,7 +16,7 @@
       <bpmn:outgoing>Flow_06bdvxo</bpmn:outgoing>
       <bpmn:outgoing>Flow_179cl73</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1rkzdoh" sourceRef="Activity_1ua290a" targetRef="Gateway_016aviy" />
+    <bpmn:sequenceFlow id="Flow_1rkzdoh" sourceRef="reviewTweet" targetRef="Gateway_016aviy" />
     <bpmn:sequenceFlow id="Flow_06bdvxo" name="yes" sourceRef="Gateway_016aviy" targetRef="Activity_1nen5tw">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{approved == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -30,14 +30,14 @@
       <bpmn:outgoing>Flow_1covv5s</bpmn:outgoing>
       <bpmn:script>print('Tweet rejected');</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:manualTask id="Activity_1ua290a" name="review tweet">
-      <bpmn:incoming>Flow_15pm1cb</bpmn:incoming>
-      <bpmn:outgoing>Flow_1rkzdoh</bpmn:outgoing>
-    </bpmn:manualTask>
     <bpmn:serviceTask id="Activity_1nen5tw" name="post tweet" camunda:class="org.bpmn.training.camundatraining.camunda.CreateTweetDelegate">
       <bpmn:incoming>Flow_06bdvxo</bpmn:incoming>
       <bpmn:outgoing>Flow_17tjtut</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:userTask id="reviewTweet" name="review tweet" camunda:candidateGroups="management">
+      <bpmn:incoming>Flow_15pm1cb</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rkzdoh</bpmn:outgoing>
+    </bpmn:userTask>
   </bpmn:process>
   <bpmn:message id="Message_3b3iubk" name="document" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -69,11 +69,11 @@
       <bpmndi:BPMNShape id="Activity_1ckkx6h_di" bpmnElement="Activity_09ja5l1">
         <dc:Bounds x="520" y="200" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0r95jgq_di" bpmnElement="Activity_1ua290a">
-        <dc:Bounds x="260" y="90" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0kw53se_di" bpmnElement="Activity_1nen5tw">
         <dc:Bounds x="520" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1pjo0mh_di" bpmnElement="reviewTweet">
+        <dc:Bounds x="260" y="90" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_15pm1cb_di" bpmnElement="Flow_15pm1cb">
         <di:waypoint x="208" y="130" />
