@@ -62,4 +62,22 @@ class CamundaTrainingApplicationTests {
 		BpmnAwareTests.assertThat(processInstance).isEnded();
     }
 
+	@Test
+	@Deployment(resources = "tweetQA.bpmn")
+	void shouldTestTweetRejected() {
+		RuntimeService runtimeService = processEngine.getRuntimeService();
+
+		Map<String, Object> variables = new HashMap<String, Object>();
+		variables.put("content", "First tweet!");
+		variables.put("approved", false);
+
+		ProcessInstance processInstance = runtimeService.createProcessInstanceByKey("twitterQa")
+				.setVariables(variables)
+				.startAfterActivity(findId("review tweet"))
+				.execute();
+
+		BpmnAwareTests.assertThat(processInstance).isEnded().hasPassed(findId("delete tweet"));
+
+	}
+
 }

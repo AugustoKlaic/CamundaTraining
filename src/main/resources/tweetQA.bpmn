@@ -20,12 +20,12 @@
     <bpmn:sequenceFlow id="Flow_06bdvxo" name="yes" sourceRef="Gateway_016aviy" targetRef="Activity_1nen5tw">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{approved == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_179cl73" name="no" sourceRef="Gateway_016aviy" targetRef="Activity_09ja5l1">
+    <bpmn:sequenceFlow id="Flow_179cl73" name="no" sourceRef="Gateway_016aviy" targetRef="deleteTweet">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{approved == false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_17tjtut" sourceRef="Activity_1nen5tw" targetRef="Event_038sjl5" />
-    <bpmn:sequenceFlow id="Flow_1covv5s" sourceRef="Activity_09ja5l1" targetRef="Event_1wmneb9" />
-    <bpmn:scriptTask id="Activity_09ja5l1" name="delete tweet" scriptFormat="javascript">
+    <bpmn:sequenceFlow id="Flow_1covv5s" sourceRef="deleteTweet" targetRef="Event_1wmneb9" />
+    <bpmn:scriptTask id="deleteTweet" name="delete tweet" scriptFormat="javascript">
       <bpmn:incoming>Flow_179cl73</bpmn:incoming>
       <bpmn:outgoing>Flow_1covv5s</bpmn:outgoing>
       <bpmn:script>print('Tweet rejected');</bpmn:script>
@@ -66,7 +66,7 @@
           <dc:Bounds x="414" y="81" width="52" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1ckkx6h_di" bpmnElement="Activity_09ja5l1">
+      <bpmndi:BPMNShape id="Activity_1ckkx6h_di" bpmnElement="deleteTweet">
         <dc:Bounds x="520" y="200" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0kw53se_di" bpmnElement="Activity_1nen5tw">
