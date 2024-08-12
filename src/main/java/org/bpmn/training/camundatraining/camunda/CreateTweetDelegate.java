@@ -12,6 +12,11 @@ public class CreateTweetDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
         String content = (String) delegateExecution.getVariable("content");
+
+        if (content.equals("Network error")) {
+            throw new RuntimeException("simulated network error");
+        }
+
         twitterService.updateStatus(content);
     }
 }
