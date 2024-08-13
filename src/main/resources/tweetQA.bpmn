@@ -30,10 +30,6 @@
       <bpmn:incoming>Flow_04d2y4z</bpmn:incoming>
       <bpmn:outgoing>Flow_17tjtut</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="deleteTweet" name="delete tweet" camunda:type="external" camunda:topic="notification">
-      <bpmn:incoming>Flow_179cl73</bpmn:incoming>
-      <bpmn:outgoing>Flow_1covv5s</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:startEvent id="Event_1e95oc2" name="tweet submitted by superuser">
       <bpmn:outgoing>Flow_04d2y4z</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0cwxclf" messageRef="Message_1fmf6jp" />
@@ -45,7 +41,7 @@
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_1fj2u4e" sourceRef="duplicatedTweet" targetRef="Activity_1dkb6bv" />
     <bpmn:sequenceFlow id="Flow_1lczsei" sourceRef="Activity_1dkb6bv" targetRef="reviewTweet" />
-    <bpmn:userTask id="Activity_1dkb6bv" name="edit tweet" camunda:candidateGroups="management">
+    <bpmn:userTask id="Activity_1dkb6bv" name="edit tweet">
       <bpmn:incoming>Flow_1fj2u4e</bpmn:incoming>
       <bpmn:outgoing>Flow_1lczsei</bpmn:outgoing>
     </bpmn:userTask>
@@ -62,6 +58,10 @@
       <bpmn:messageEventDefinition id="MessageEventDefinition_1jno5xk" messageRef="Message_2vp5ru5" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_0p0s3ux" sourceRef="Event_0koty6c" targetRef="Event_0ekpkoz" />
+    <bpmn:serviceTask id="deleteTweet" name="delete tweet" camunda:type="external" camunda:topic="notification">
+      <bpmn:incoming>Flow_179cl73</bpmn:incoming>
+      <bpmn:outgoing>Flow_1covv5s</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmn:message id="Message_3b3iubk" name="document" />
   <bpmn:message id="Message_1fmf6jp" name="superuserTweet" />
