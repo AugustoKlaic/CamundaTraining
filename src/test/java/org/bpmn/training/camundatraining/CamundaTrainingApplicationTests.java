@@ -1,5 +1,6 @@
 package org.bpmn.training.camundatraining;
 
+import org.camunda.bpm.dmn.engine.DmnDecisionTableResult;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.Job;
@@ -15,119 +16,175 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.*;
 
 
 @ExtendWith(ProcessEngineCoverageExtension.class)
+@Deployment(resources = {"tweetApproval.dmn", "tweetQA.bpmn"})
 class CamundaTrainingApplicationTests {
 
-	private final static String MANAGEMENT_GROUP = "management";
+    private final static String MANAGEMENT_GROUP = "management";
 
-	ProcessEngine processEngine;
+    private ProcessEngine processEngine;
 
-	@Test
-	@Deployment(resources = "tweetQA.bpmn")
+    @Test
     void shouldTestHappyPathOfBPMN() {
-		RuntimeService runtimeService = processEngine.getRuntimeService();
+        RuntimeService runtimeService = processEngine.getRuntimeService();
 
-		Map<String, Object> variables = new HashMap<String, Object>();
-		variables.put("content", "First tweet!");
+        Map<String, Object> variables = new HashMap<String, Object>();
+        variables.put("content", "First tweet!");
+        variables.put("email", "approved@gmail.com");
 
-		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("twitterQa", variables);
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("twitterQa", variables);
 
-		BpmnAwareTests.assertThat(processInstance).isWaitingAt(findId("review tweet"));
+        BpmnAwareTests.assertThat(processInstance).isWaitingAt(findId("post tweet"));
 
-		List<Task> taskList = taskService()
-				.createTaskQuery()
-				.taskCandidateGroup(MANAGEMENT_GROUP)
-				.processInstanceId(processInstance.getId())
-				.list();
+        List<Job> jobList = jobQuery()
+                .processInstanceId(processInstance.getId())
+                .list();
 
-		assertThat(taskList).isNotNull();
-		assertThat(taskList).hasSize(1);
+        assertThat(jobList).hasSize(1);
+        Job job = jobList.get(0);
 
-		Task task = taskList.get(0);
-		taskService().complete(task.getId(), Map.of("approved", true));
+        execute(job);
 
-		List<Job> jobList = jobQuery()
-				.processInstanceId(processInstance.getId())
-				.list();
-
-		assertThat(jobList).hasSize(1);
-		Job job = jobList.get(0);
-
-		execute(job);
-
-		BpmnAwareTests.assertThat(processInstance).isEnded();
+        BpmnAwareTests.assertThat(processInstance).isEnded();
     }
 
-	@Test
-	@Deployment(resources = "tweetQA.bpmn")
-	void shouldTestTweetRejected() {
-		RuntimeService runtimeService = processEngine.getRuntimeService();
+    @Test
+    void shouldTestTweetRejected() {
+        RuntimeService runtimeService = processEngine.getRuntimeService();
 
-		Map<String, Object> variables = new HashMap<String, Object>();
-		variables.put("content", "First tweet!");
-		variables.put("approved", false);
+        Map<String, Object> variables = new HashMap<String, Object>();
+        variables.put("content", "First tweet!");
+        variables.put("approved", false);
 
-		ProcessInstance processInstance = runtimeService.createProcessInstanceByKey("twitterQa")
-				.setVariables(variables)
-				.startAfterActivity(findId("review tweet"))
-				.execute();
+        ProcessInstance processInstance = runtimeService.createProcessInstanceByKey("twitterQa")
+                .setVariables(variables)
+                .startAfterActivity(findId("review tweet"))
+                .execute();
 
-		BpmnAwareTests.assertThat(processInstance)
-				.isWaitingAt(findId("delete tweet"))
-				.externalTask()
-				.hasTopicName("notification");
+        BpmnAwareTests.assertThat(processInstance)
+                .isWaitingAt(findId("delete tweet"))
+                .externalTask()
+                .hasTopicName("notification");
 
-		complete(externalTask());
+        complete(externalTask());
 
-		BpmnAwareTests.assertThat(processInstance).isEnded().hasPassed(findId("delete tweet"));
+        BpmnAwareTests.assertThat(processInstance).isEnded().hasPassed(findId("delete tweet"));
 
-	}
+    }
 
-	@Test
-	@Deployment(resources = "tweetQA.bpmn")
-	void shouldTestTweetSuperUser() {
-		RuntimeService runtimeService = processEngine.getRuntimeService();
+    @Test
+    void shouldTestTweetSuperUser() {
+        RuntimeService runtimeService = processEngine.getRuntimeService();
 
-		ProcessInstance processInstance = runtimeService
-				.createMessageCorrelation("superuserTweet")
-				.setVariable("content", "My superUser tweet!")
-				.correlateWithResult()
-				.getProcessInstance();;
+        ProcessInstance processInstance = runtimeService
+                .createMessageCorrelation("superuserTweet")
+                .setVariable("content", "My superUser tweet!")
+                .correlateWithResult()
+                .getProcessInstance();
+        ;
 
-		BpmnAwareTests.assertThat(processInstance).isStarted();
+        BpmnAwareTests.assertThat(processInstance).isStarted();
 
-		List<Job> jobList = jobQuery()
-				.processInstanceId(processInstance.getId())
-				.list();
+        List<Job> jobList = jobQuery()
+                .processInstanceId(processInstance.getId())
+                .list();
 
-		assertThat(jobList).hasSize(1);
-		Job job = jobList.get(0);
-		execute(job);
+        assertThat(jobList).hasSize(1);
+        Job job = jobList.get(0);
+        execute(job);
 
-		BpmnAwareTests.assertThat(processInstance).isEnded();
-	}
+        BpmnAwareTests.assertThat(processInstance).isEnded();
+    }
 
-	@Test
-	@Deployment(resources = "tweetQA.bpmn")
-	void shouldTestTweetWithdrawn() {
-		RuntimeService runtimeService = processEngine.getRuntimeService();
+    @Test
+    void shouldTestTweetWithdrawn() {
+        RuntimeService runtimeService = processEngine.getRuntimeService();
 
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("content", "Test tweetWithdrawn message");
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("content", "duplicate tweet error");
+        variables.put("email", "approved@gmail.com");
 
-		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("twitterQa", variables);
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("twitterQa", variables);
 
-		BpmnAwareTests.assertThat(processInstance).isStarted().isWaitingAt(findId("review tweet"));
+        BpmnAwareTests.assertThat(processInstance).isWaitingAt(findId("post tweet"));
 
-		runtimeService()
-				.createMessageCorrelation("tweetWithdrawn")
-				.processInstanceVariableEquals("content", "Test tweetWithdrawn message")
-				.correlateWithResult();
+        List<Job> jobList = jobQuery()
+                .processInstanceId(processInstance.getId())
+                .list();
 
-		BpmnAwareTests.assertThat(processInstance).isEnded();
-	}
+        assertThat(jobList).hasSize(1);
+        Job job = jobList.get(0);
+        execute(job);
+
+        BpmnAwareTests.assertThat(processInstance).isWaitingAt(findId("edit tweet"));
+
+        runtimeService()
+                .createMessageCorrelation("tweetWithdrawn")
+                .processInstanceVariableEquals("content", "duplicate tweet error")
+                .correlateWithResult();
+
+        BpmnAwareTests.assertThat(processInstance).isEnded();
+    }
+
+    @Test
+    void shouldTestTweetEditAndApprove() {
+        RuntimeService runtimeService = processEngine.getRuntimeService();
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("content", "duplicate tweet error");
+        variables.put("email", "approved@gmail.com");
+
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("twitterQa", variables);
+
+        BpmnAwareTests.assertThat(processInstance).isWaitingAt(findId("post tweet"));
+
+        List<Job> jobList = jobQuery()
+                .processInstanceId(processInstance.getId())
+                .list();
+
+        assertThat(jobList).hasSize(1);
+        Job job = jobList.get(0);
+        execute(job);
+
+        BpmnAwareTests.assertThat(processInstance).isWaitingAt(findId("edit tweet"));
+
+        List<Task> taskList = taskService()
+                .createTaskQuery()
+                .taskCandidateGroup(MANAGEMENT_GROUP)
+                .processInstanceId(processInstance.getId())
+                .list();
+
+        assertThat(taskList).isNotNull();
+        assertThat(taskList).hasSize(1);
+
+        Task task = taskList.get(0);
+        taskService().complete(task.getId(), Map.of("content", "Edited tweet"));
+
+        BpmnAwareTests.assertThat(processInstance).isWaitingAt(findId("post tweet"));
+
+        List<Job> secondJobList = jobQuery()
+                .processInstanceId(processInstance.getId())
+                .list();
+
+        assertThat(secondJobList).hasSize(1);
+        Job secondJob = secondJobList.get(0);
+        execute(secondJob);
+
+        BpmnAwareTests.assertThat(processInstance).isEnded();
+    }
+
+    @Test
+    void shouldTestTweetApprovalEmailApproved() {
+
+        Map<String, Object> variables = withVariables("email", "approved@gmail.com", "content", "tweet posted");
+        DmnDecisionTableResult decisionResult = decisionService().evaluateDecisionTableByKey("tweetApproval", variables);
+
+        assertThat(decisionResult.getFirstResult()).contains(entry("approved", true));
+
+    }
 }
