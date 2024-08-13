@@ -76,8 +76,58 @@ class CamundaTrainingApplicationTests {
 				.startAfterActivity(findId("review tweet"))
 				.execute();
 
+		BpmnAwareTests.assertThat(processInstance)
+				.isWaitingAt(findId("delete tweet"))
+				.externalTask()
+				.hasTopicName("notification");
+
+		complete(externalTask());
+
 		BpmnAwareTests.assertThat(processInstance).isEnded().hasPassed(findId("delete tweet"));
 
 	}
 
+	@Test
+	@Deployment(resources = "tweetQA.bpmn")
+	void shouldTestTweetSuperUser() {
+		RuntimeService runtimeService = processEngine.getRuntimeService();
+
+		ProcessInstance processInstance = runtimeService
+				.createMessageCorrelation("superuserTweet")
+				.setVariable("content", "My superUser tweet!")
+				.correlateWithResult()
+				.getProcessInstance();;
+
+		BpmnAwareTests.assertThat(processInstance).isStarted();
+
+		List<Job> jobList = jobQuery()
+				.processInstanceId(processInstance.getId())
+				.list();
+
+		assertThat(jobList).hasSize(1);
+		Job job = jobList.get(0);
+		execute(job);
+
+		BpmnAwareTests.assertThat(processInstance).isEnded();
+	}
+
+	@Test
+	@Deployment(resources = "tweetQA.bpmn")
+	void shouldTestTweetWithdrawn() {
+		RuntimeService runtimeService = processEngine.getRuntimeService();
+
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("content", "Test tweetWithdrawn message");
+
+		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("twitterQa", variables);
+
+		BpmnAwareTests.assertThat(processInstance).isStarted().isWaitingAt(findId("review tweet"));
+
+		runtimeService()
+				.createMessageCorrelation("tweetWithdrawn")
+				.processInstanceVariableEquals("content", "Test tweetWithdrawn message")
+				.correlateWithResult();
+
+		BpmnAwareTests.assertThat(processInstance).isEnded();
+	}
 }
