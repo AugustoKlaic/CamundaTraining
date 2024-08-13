@@ -1,6 +1,7 @@
 package org.bpmn.training.camundatraining.camunda;
 
 import org.bpmn.training.camundatraining.service.TwitterService;
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,10 @@ public class CreateTweetDelegate implements JavaDelegate {
             throw new RuntimeException("simulated network error");
         }
 
-        twitterService.updateStatus(content);
+        try {
+            twitterService.updateStatus(content);
+        } catch (Exception e) {
+            throw new BpmnError("duplicateTweetError", "Tweet is duplicated!");
+        }
     }
 }
