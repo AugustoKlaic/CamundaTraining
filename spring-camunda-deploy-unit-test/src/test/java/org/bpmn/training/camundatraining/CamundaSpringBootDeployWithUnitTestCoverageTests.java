@@ -23,7 +23,7 @@ import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.*;
 
 @ExtendWith(ProcessEngineCoverageExtension.class)
 @Deployment(resources = {"tweetApproval.dmn", "tweetQA.bpmn"})
-class CamundaTrainingApplicationTests {
+class CamundaSpringBootDeployWithUnitTestCoverageTests {
 
     private final static String MANAGEMENT_GROUP = "management";
 

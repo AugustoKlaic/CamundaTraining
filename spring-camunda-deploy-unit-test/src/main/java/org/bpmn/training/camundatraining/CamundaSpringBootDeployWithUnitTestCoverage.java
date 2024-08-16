@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @EnableProcessApplication
-public class CamundaTrainingApplication {
+public class CamundaSpringBootDeployWithUnitTestCoverage {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CamundaTrainingApplication.class, args);
+    public static void main(String[] args) {
+		SpringApplication.run(CamundaSpringBootDeployWithUnitTestCoverage.class, args);
 	}
 
 }
