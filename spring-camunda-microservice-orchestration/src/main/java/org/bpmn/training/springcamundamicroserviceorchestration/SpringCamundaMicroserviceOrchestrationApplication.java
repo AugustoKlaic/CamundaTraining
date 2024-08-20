@@ -6,12 +6,15 @@ import io.camunda.zeebe.client.impl.oauth.OAuthCredentialsProvider;
 import io.camunda.zeebe.client.impl.oauth.OAuthCredentialsProviderBuilder;
 import io.camunda.zeebe.spring.client.EnableZeebeClient;
 import org.bpmn.training.springcamundamicroserviceorchestration.jobworker.PaymentProcessManualWorker;
+import org.bpmn.training.springcamundamicroserviceorchestration.service.CreditCardService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootApplication
 @EnableZeebeClient
@@ -53,12 +56,23 @@ public class SpringCamundaMicroserviceOrchestrationApplication implements Comman
                                  .credentialsProvider(credentialsProvider)
                                  .build()) {
 
+                final Map<String, Object> variables = new HashMap<>();
+                variables.put("reference", "C8_12345");
+                variables.put("amount", 100.00);
+                variables.put("cardNumber", "1234567812345678");
+                variables.put("cardExpiry", "12/2023");
+                variables.put("cardCVC", "123");
+
+                client.newCreateInstanceCommand().bpmnProcessId("paymentProcess").latestVersion().variables(variables)
+                        .send().join();
+
                 final JobWorker creditCardWorker =
                         client.newWorker()
                                 .jobType("chargeCreditCard")
-                                .handler(new PaymentProcessManualWorker())
+                                .handler(new PaymentProcessManualWorker(new CreditCardService()))
                                 .timeout(Duration.ofSeconds(10).toMillis())
                                 .open();
+
                 Thread.sleep(10000);
             } catch (Exception e) {
                 e.printStackTrace();
