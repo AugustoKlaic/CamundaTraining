@@ -4,10 +4,12 @@ import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.worker.JobClient;
 import io.camunda.zeebe.client.api.worker.JobHandler;
 import org.bpmn.training.springcamundamicroserviceorchestration.service.CreditCardService;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class PaymentProcessManualWorker implements JobHandler {
 
     private final CreditCardService creditCardService;
