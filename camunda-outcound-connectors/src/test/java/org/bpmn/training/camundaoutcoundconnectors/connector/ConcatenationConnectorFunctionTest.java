@@ -25,7 +25,7 @@ class ConcatenationConnectorFunctionTest {
     void shouldReturnConcatenatedResult() throws Exception {
         ConcatenationConnectorRequest connectorRequest = new ConcatenationConnectorRequest(input1, input2);
 
-        ConcatenationConnectorFunction connectorFunction = new ConcatenationConnectorFunction(connectorRequest);
+        ConcatenationConnectorFunction connectorFunction = new ConcatenationConnectorFunction();
 
         OutboundConnectorContext context = OutboundConnectorContextBuilder.create().variables(connectorRequest).build();
 

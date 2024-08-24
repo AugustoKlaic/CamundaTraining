@@ -10,12 +10,6 @@ import io.camunda.connector.api.outbound.OutboundConnectorFunction;
         type = "io.camunda:concatenation-api:1")
 public class ConcatenationConnectorFunction implements OutboundConnectorFunction {
 
-    private final ConcatenationConnectorRequest connectorRequest;
-
-    public ConcatenationConnectorFunction(ConcatenationConnectorRequest connectorRequest) {
-        this.connectorRequest = connectorRequest;
-    }
-
     @Override
     public Object execute(OutboundConnectorContext context) throws Exception {
         final var connectorRequest = context.bindVariables(ConcatenationConnectorRequest.class);
