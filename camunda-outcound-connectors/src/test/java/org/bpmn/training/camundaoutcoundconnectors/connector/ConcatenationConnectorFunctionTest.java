@@ -22,7 +22,7 @@ class ConcatenationConnectorFunctionTest {
     }
 
     @Test
-    void should() throws Exception {
+    void shouldReturnConcatenatedResult() throws Exception {
         ConcatenationConnectorRequest connectorRequest = new ConcatenationConnectorRequest(input1, input2);
 
         ConcatenationConnectorFunction connectorFunction = new ConcatenationConnectorFunction(connectorRequest);
