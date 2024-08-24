@@ -5,10 +5,18 @@ import jakarta.validation.constraints.NotEmpty;
 public class ConcatenationConnectorRequest {
 
     @NotEmpty
-    String input1;
+    private String input1;
 
     @NotEmpty
-    String input2;
+    private String input2;
+
+    public ConcatenationConnectorRequest(String input1, String input2) {
+        this.input1 = input1;
+        this.input2 = input2;
+    }
+
+    public ConcatenationConnectorRequest() {
+    }
 
     public String getInput1() {
         return input1;

@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -19,14 +19,14 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    implementation "io.camunda.connector:connector-core:8.5.0"
-    implementation "io.camunda.connector:connector-validation:8.5.0"
-    implementation 'io.camunda.connector:spring-boot-starter-camunda-connectors:8.5.0'
+    implementation "io.camunda.connector:connector-core:8.5.5"
+    implementation "io.camunda.connector:connector-validation:8.5.5"
+    implementation 'io.camunda.connector:spring-boot-starter-camunda-connectors:8.5.5'
 
-
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.camunda.connector:connector-test:8.5.5'
 
 }
 
