@@ -1,4 +1,4 @@
-package org.bpmn.training.camundaoutcoundconnectors;
+package org.bpmn.training.camundaoutboundconnectors;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

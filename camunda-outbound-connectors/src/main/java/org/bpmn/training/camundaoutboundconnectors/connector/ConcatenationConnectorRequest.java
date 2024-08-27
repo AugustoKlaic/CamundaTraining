@@ -1,4 +1,4 @@
-package org.bpmn.training.camundaoutcoundconnectors.connector;
+package org.bpmn.training.camundaoutboundconnectors.connector;
 
 import jakarta.validation.constraints.NotEmpty;
 
