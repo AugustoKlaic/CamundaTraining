@@ -10,8 +10,7 @@ import java.util.concurrent.Executors;
 
 @InboundConnector(
         name = "Watch Service Inbound Connector",
-        type = "io.camunda:watchserviceinbound:1"
-)
+        type = "io.camunda:watchserviceinbound:1")
 public class MyConnectorExecutable implements InboundConnectorExecutable<InboundConnectorContext> {
 
     private WatchServiceSubscription subscription;
@@ -27,13 +26,11 @@ public class MyConnectorExecutable implements InboundConnectorExecutable<Inbound
 
         this.future =
                 CompletableFuture.runAsync(
-                        () -> {
-                            new WatchServiceSubscription(
-                                    props.getEventToMonitor(),
-                                    props.getDirectory(),
-                                    props.getPollingInterval(),
-                                    this::onEvent);
-                        },
+                        () -> new WatchServiceSubscription(
+                                props.getEventToMonitor(),
+                                props.getDirectory(),
+                                props.getPollingInterval(),
+                                this::onEvent),
                         this.executorService);
     }
 
