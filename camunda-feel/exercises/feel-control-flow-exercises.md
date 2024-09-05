@@ -142,7 +142,6 @@ that iterates through the services and constructs a new list of contexts. Each n
         else if processInstance.variables.budget < processInstance.variables.expenses then "Over Budget"
         else "On Budget")
     ```
-
 - Write a FEEL expression to find the first uncompleted task in the process sorted by id in alphabetical order. Update the processInstance object by adding a new element nextTask which should be the name of the next task to complete
   - ```
       context put(processInstance, "nextTask", sort(processInstance.tasks[completed = false], function(x, y) x.id < y.id)[1].name)
