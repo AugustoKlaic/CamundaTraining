@@ -76,4 +76,26 @@
 - On ``/resources`` is needed to add the ``META-INF`` folder with a file that contains your function class name to be exposed
 - The JSON template follows the same logic and have the same components and attributes 
 - #### Runtime logic
-  - d
+  - Need to implement ***InboundConnectorExecutable*** interface
+  - Connector runtime environments will call this function
+  - Handles input data, execute business logic
+  - Consists of two methods: ``activate`` and ``deactivate``
+  - Activate method is a trigger, to start listening to inbound events
+  - Activate has to be asynchronous
+  - Deactivate method is just a graceful shutdown hook
+  - Deactivate must release all resources used by the subscription
+  - Can use Jakarta bean validation on properties line @NotEmpty...
+  - Has multiple types of validation, that can be used or customized as your needs
+
+
+### Testing
+ - No need to test camunda internals or provide mocks
+ - Focus on business logic: Data validation, secret replacement, core logic of connector
+ - Uses ***OutboundConnectorContextBuilder***  to build all context of camunda
+
+### Runtime environments
+- There are 3 runtime envs available: Spring, Docker and Custom(self-managed)
+- On docker basically create a docker image following the camunda documentation
+- For Spring some dependencies are needed
+- Here in [this project](https://github.com/AugustoKlaic/CamundaTraining/tree/master/spring-camunda-microservice-orchestration) 
+there are 2 ways of running environments, the SpringBoot way and the sel-managed way
