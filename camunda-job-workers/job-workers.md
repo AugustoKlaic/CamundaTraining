@@ -3,6 +3,8 @@
 - Is a service capable of performing a particular task in a process
 - Each service task of a diagram, that is implemented as a JobWorker, generates a specific worker
 - Each time the task has to be performed, this is represented as a **JOB**
+- Zeebe is an "at least once" system
+- Worker must be idempotent (worker code will be executed more than once for the same job)
 - A job has 4 properties:
   - Type 
     - Describes the work item
@@ -17,6 +19,8 @@
     - Used to report failures of a job execution
   - Variables:
     - The contextual/business data of the process instance required by the worker
+- Job workers can be used in streaming fashion
+  - Jobs are automatically activated and pushed downstream to workers, not requiring polling
 
 ### Requesting Jobs
 
@@ -43,6 +47,12 @@
 - When failed job, a retry back off can be set to wait more time and delay the retries
 
 
+### Timeouts
+- When the job is not concluded or failed within the timeout, zeebe will reassign the job to another worker
+- Does not affect the retry count
+- When zeebe reassign the job to another worker, it may lead to two workers working in the same job at the same time
+  - If this occurs only one worker can successfully complete the job. The other ``complete job`` command is rejected with a ``NOT FOUND`` error
+- Timeout can be extended or shortened via ``updateJobTimeout`` gRPC command
 
 
 
