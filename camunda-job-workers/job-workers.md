@@ -54,16 +54,25 @@
   - If this occurs only one worker can successfully complete the job. The other ``complete job`` command is rejected with a ``NOT FOUND`` error
 - Timeout can be extended or shortened via ``updateJobTimeout`` gRPC command
 
+### Job workers common problems
 
+#### Not Found
+- A timeout may lead to two different workers working on the same job, possibly at the same time.
+- If this occurs, only one worker successfully completes the job. 
+- The other complete job command is rejected with a NOT FOUND error.
 
+- Or some of the workers are not registered correctly on zeebe
+  - Check its type and other properties 
 
-Anotei pra nós aqui os pontos que o pessoal falou da prova na reunião agora:
+#### TimeOut
+- Basically the worker is taking too much time to conclude the job
+  - Increase the timeout of the job
 
-Prestar atenção no tempo da prova -> 75 min para 60 questões
-Job workers (not found, time out, multi instancias)
-Job workers (gateway exausted) -> nao tem no curso pra prova
-FEEL (bastante coisa de detalhes na sintaxe)
-Zeeb API
-forms(Dynamic list, hide fields e feel)
-Zero código Java, so questões teóricas. Ex: "Tenho um JobWorker X que faz Y e deu o erro Z,o que devo fazer para corrigir?"
-Arquitetura zeebe (brokers, partitions and clusterização)
+#### gateway exhausted
+- Worker is consuming more jobs than it can process
+- Indicates problem with backpressure, the broker is at capacity and cannot take more load
+- Job streaming may cause this if bad configured
+
+#### Multi instances
+- Long processing times due to huge amount of data to process at the same time
+- Maybe using a batched solution to send few data to camunda process
