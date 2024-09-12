@@ -36,3 +36,5 @@ has the same ``correlation-key``, after published the process instance is create
 - Odd replication factor better than even replication factor
   - replication factor of 4 are equal than a replication factor of 3 and is worse than a replication factor of 5
 
+#### Partition distribution
+- The default distribution is done by round-robin fashion across all brokers
