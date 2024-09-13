@@ -36,52 +36,26 @@ and adjust the poll interval (if the worker is spending too much time polling jo
 return the job the to queue. In the queue, the job will be picked by any worker that is available of the same type of the job
 not necessarily by the same worker that picked it before.
 
+- What is the communication between zeebe and his workers?
+  - A: Zeebe creates a job and stores it in a queue, then a job worker makes a polling request to zeebe to retrieve a job 
+with same type the worker can process. The worker then fetch the job information and lock the job for not let any other worker take the same job.
+The worker process the job and then sends a command message to zeebe (fail or complete), if a job is failed it will retry
+and then open an incident if the fail persists, if the job is completed successfully zeebe will go on with the workflow
 
+- A terminate signal from a subprocess will cancel the execution of the subprocess and the execution of the father process?
+  - A: The subprocess will be cancelled but the father process will not be affected, this is applied to embedded subprocess and call activities
 
+- What is needed for the variables of the process appear on the subprocesses?
+  - A: Nothing is needed, the subprocesses inherit the variables from the father process. But if new variables are created 
+on the subprocess it will not be passed to the father process. Variables of subprocess can be mapped to father process as outputs.
 
+- What is the best way to guarantee that a task a employee see the specified data?
+  - A: User task, because it will appear on camunda tasklist and the employee will work on it
 
-# Translate and correct after...
+- What field is used to map the return of a connector to the business flow?
+  - A: There are two reusable objects that are an output mapper of the response of the connector ``Result Variable`` and ``Result expression``.
+And there is an object for mapping error responses too, that is the ``Error expression``
 
-
-- caiu uma quetão muito parecida com a do simulado sobre a comunicação entre zeebe e worker... zeebe joga na fila, worker consome a fila
-
-- tenho 3 processos, como "solicitação", "aprovação" e "entrega". Apesar de o fluxo padrão ser sempre a maioria dos casos, o processo do meio pode ter um caminho mais complexo baseado nas regras de negocio e nas variaveis, qual a melhor forma de desenvolver esse caminho "extra"? paralel gateway, call activity, adhoc subprocess
-
-- você ensinou novos colaboradores sobre exclusive gateway e inclusive gateway, qual a anotação abaixo que está correta?
-  - o fluxo default sempre vai ser executado em um inclusive gateway?
-  - o fluxo default vai ser executado somente quando nenhum outro for verdadeiro?
-  - não lembro as outras opções
-
-- uma lista de dados retirados de um documento vai passar por varias Decision Tables, cada uma vai validar os dados e tendo palavras chave, vai setar um score, esse score vai ser usado pra definir qual area deve atuar na tarefa. Por exemplo, se tiver a palavra "invoice" um score 0.5 é adicionado para a area XPTO, se tiver a palavra "blabla", um score 1 é adicionado para a área XYZ... qual a hit policy deve ser definida para saber o score de cada area?
-  - collect(sum) (selecionei essa)
-  - collect (max)
-    não lembro mais outras
-
-- boas praticas de uso de terminate. Um terminate cancela o processo pai de call activity? de event subprocess?
-
-- tendo um processo com gateway paralelo, onde um caminho sempre fica em looping e o outro chega a um fim, qual a melhor forma de encerrar o processo?
-  - selecionei "terminate event"
-
-- preciso de variaveis especificas dentro de um event subprocess
-  - preciso mapear no input?
-  - elas vem automatico, não preciso fazer nada?
-  - devo enviar por message?
-  - devo criar um service task dentro do sub-processes para buscar os dados da tarefa pai?
-
-- tenho processo "red", "yellow" e "gree", todos parados em um ecento intermediario de signal. Um processo externo envia um signal, depois envia novamente, depois um processo "blue" chega com o token em um evento signal também, o que acontece?
-  - o primeiro sinal dispara red, yellow e green, o segundo sinal não faz nada, o token em blue vai ficar esperando um terceiro sinal?
-  - o primeiro sinal dispara somente red, o segundo somente yellow, green e blue vao ficar esperando
-  - o primeiro sinal dispara red, yellow e green, o segundo sinal não faz nada, quando o blue chegar no evento intermediario vai disparar por ter um sinal sem ser consumido
-
-- qual melhor forma de garantir uma tarefa que o cliente visualise dados especificos, manual task, send message task, user task?
-
-- 4 ou 5 questões de feel, gastei tempo demais nelas
-
-- se vc nao quer que os service task tenham retry, qual propriedade nos out-of-the-box connectors a camunda te fornece para ajustar isso? (sinceramente aqui ja to confuso se nao to misturndo duas perguntas)
-
-- voce precisa mapear o fluxo do negocio baseado no status do retorno do connector . em qual campo se faz isso? Respose, result, error handling (selecionei essa pq lembrei disso https://docs.camunda.io/docs/components/connectors/use-connectors/#error-expression)
-
-- no DRD você desenhou os inputs da sua Decision table para ficar mais facil a vizualização, qual a relação dos inputs do DRD com os inputs do Decision Table?
-  - você precisa fazer um input na tabela pra cada input desenhado no DRD?
-  - elas não tem relação na pratica, então você pode fazer o que quiser no DRD?
-  - coisas assim
+- What is the relation between inputs in DRD with the inputs of the DMN table?
+  - A: There is no relation, the inputs mapped in the DRD are illustrative and a way of documenting and facilitating readiness,
+and the inputs in the DMN table are in fact used to evaluate the FEEL expression and return a result.
