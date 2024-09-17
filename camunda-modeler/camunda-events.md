@@ -121,3 +121,49 @@
 - Business reactions > technical reactions
 
 #### Escalation events
+
+- Used to communicate with a higher flow scope
+- Unlike the error event, escalation is non-critical and execution continues at the location of throwing
+- Escalation uses escalationCode to match the throwing with the catching event, with an escalation does not have escalationCode it catches all thrown escalation
+- Can be caught using boundary events or event subprocesses
+- It is caught by one catch event at most, and this will be the catch event in the nearest parent flow scope
+- Is not possible define multiple escalation catch events with the same escalationCode in a single scope
+- Is not possible to have multiple catch-all escalation event in a single scope
+- If no catch event was defined to an escalation event, the process will continue normally without raising an incident like error events
+
+
+#### Terminate events
+
+- The only kind of terminate events
+- When reached it terminates all element instances in the same flow scope as the end event
+- Often used to terminate a concurrent flow that is not required anymore
+- When on a call activity, the call activity scope is terminated, and the token returns to the parent scope
+- Inside a subprocess or embedded subprocess it terminates all instances of the subprocess, completing the subprocess and returning to parent subprocess
+- Terminate events are limited to the context they are included
+- In a multi-instance process, the terminate end event terminates only the current iteration element
+
+#### Link events
+
+- Are intermediate event that connects two parts of a process
+- Facilitate diagram creation
+- No significance related to content
+- Used to create loops, skip sections or to simplify the diagram
+- Have two parts, a throwing part as exit point and a catching part as re-entrance point
+- Linked together by their name
+- Multiple throwing link events can link with one catching link event
+- A throwing link event cannot link with multiple catching link events
+- Help to avoid "spaghetti" diagrams
+- Limited to the same scope
+
+#### Compensation events
+
+- Assists in undoing steps that were successfully done earlier in the process
+- To achieve that is necessary to add a compensation boundary event to the task
+- When triggered it invokes the compensation event of ONLY the completed tasks, the terminated or active tasks are not invoked
+- Doesn't have order, it triggers all compensation at once
+- It invokes compensations in embedded subprocess in the same scope, but only if the subprocess are not terminated or active
+- If the compensation throw event is inside the embedded subprocess it triggers only the catching event of the subprocess
+- Compensation for multi-instance, is invoked only once, this only once invocation is responsible for undoing the task for every instance
+- To compensate only one activity or to ensure order in this process and not trigger all compensation at once, it is possible to add a property called
+``activityRef``, with this property it will trigger only the activity with the name of the property, the activity must have a compensation catch event
+- Can be used in event subprocess to revert some error that has occurred in the process
