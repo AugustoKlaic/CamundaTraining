@@ -18,6 +18,13 @@
   - Non-interrupting event: do not terminate the original flow, occur in parallel
 - Message boundary events attached to task must have unique message names
 - Signal boundary events attached to task must have unique signal names
+- Time boundary events can be interrupting and non-interrupting:
+  - Interrupting timer events must have a time duration or a time date
+  - Interrupting timer events cancel the original activity
+  - Interrupting timer events are used for timeouts
+  - Non-Interrupting timer events must have either a time duration, time cycle definition or a time date definition
+  - Non-Interrupting timer events used to model notifications
+  - 
 
 #### None events
 
@@ -79,4 +86,38 @@
 
 #### Timer events
 
-- 
+- Triggered by a defined timer
+- There are two types of message events: **Start** and **Intermediate**
+- Starting timer event:
+  - Can have one or more timer start event in the process
+  - Must have either a time date or time cycle definition
+  - When process deployed, it schedules a timer for each timer start event
+  - Previous versions timers are cancelled
+  - When a timer is triggered, a new process instance is created
+- Intermediate timer events:
+  - Are catching events
+  - Can be a time duration or a date
+  - When an instance enters a catch timer event, a corresponding time is scheduled
+  - Process instance waits until the scheduled time ends and continues the process
+  - Non-Interrupting timer events can have repetitions loops
+  - Non-Interrupting timer events with time duration will trigger a single time once the date is reach
+
+#### Error events
+
+- Allow process to react to errors within a task
+- Error events reference errors thrown in the process
+- Must define an error code
+- Error code is to determine which catch event will catch the error
+- Error events can be **thrown** or **caught**
+- Throwing:
+  - Throw errors are end events
+  - Can be thrown from a job-worker
+- Catching:
+  - Can be caught by a catch event, specifically using boundary error event or an event subprocess
+  - Not possible to define multiple error events with the same error code in a single scope
+  - Cannot have multiple catch-all events in a single scope
+- Error boundary events and error events subprocesses must be interrupting
+- Unhandled errors turn into incidents
+- Business reactions > technical reactions
+
+#### Escalation events
