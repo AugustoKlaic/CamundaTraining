@@ -17,3 +17,14 @@
 - Non-interrupting event do not interfere in the multi-instance processing
 - Has a variable called ``loopCounter``, it starts at 1
 - Completion condition expression can be used to terminate the process earlier, if the expression evaluates to null it will end the multi instance process and terminate all active instances
+
+#### Compensation
+
+- Associated with the compensation boundary event
+- The mark is placed on the activity that comes right after the outgoing flow of a compensation boundary event
+- Are called compensation handlers
+- A subprocess can be used as activity to a compensation event, and is marked with the compensation symbol
+- Call activities can also be an compensation event, and also is marked with the symbol. Do not trigger the compensation event of the child process
+- In multi-instance activity the compensation handler activity must have the multi-instance symbol too, to be called to every element of the list
+- If not marked with multi-instance, the handler will execute only one time
+- Compensations can be interrupted
